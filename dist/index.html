@@ -22,6 +22,7 @@ body[data-frame="5"] .frame-actions,body[data-frame="6"] .frame-actions,body[dat
 @media(max-width:760px){.side-caption{top:auto;bottom:142px;left:50%;right:auto;transform:translateX(-50%);width:min(310px,83vw);text-align:left;font-size:11px;line-height:1.65;background:#fffffff5;padding:8px 0}.side-caption small{font-size:7px;margin-bottom:9px}.side-caption strong{font-size:12px;margin-bottom:8px}.right-caption{display:none}.side-caption .mobile-instruction{display:block!important;font:8px/1.6 var(--mono);color:#73816b;margin-top:10px}.side-caption.crushing{display:block;bottom:190px}.frame-heading.small{display:none}body[data-frame="0"] .side-caption{display:block;bottom:135px;font-size:11px}body[data-frame="0"] .side-caption small,body[data-frame="0"] .side-caption strong,body[data-frame="0"] .mobile-instruction{display:none!important}body[data-frame="5"] .side-caption:not(.right-caption),body[data-frame="6"] .side-caption:not(.right-caption),body[data-frame="7"] .side-caption:not(.right-caption){display:block;left:20px;top:35%;bottom:auto;transform:none;width:140px;font-size:11px;background:transparent}body[data-frame="5"] .side-caption .mobile-instruction,body[data-frame="6"] .side-caption .mobile-instruction,body[data-frame="7"] .side-caption .mobile-instruction{display:none!important}}
 @media(max-width:760px) and (max-height:740px){.side-caption{font-size:10px;bottom:127px;line-height:1.55}.side-caption small{display:none}.side-caption .mobile-instruction{font-size:7px;margin-top:6px}.side-caption.crushing{bottom:180px}.side-caption strong{font-size:11px;margin-bottom:7px}}
 @media(max-width:760px){.side-caption .mobile-instruction{display:none!important}.side-caption.crushing small{display:none}}
+@media(max-width:760px){.side-caption.right-caption{display:none!important}}
 </style><script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js"}}</script></head><body>
 <div class="loader" id="loader"><div class="logo">relament<sup>®</sup></div><p id="load-status">МАТЕРИАЛ В ДВИЖЕНИИ</p><div class="loader-line"><i></i></div></div><canvas id="world" aria-label="Центральная интерактивная 3D-сцена: крышки, дробилка, экструдер, нить, катушка, принтер и ферзь"></canvas><div id="canvas-error">Не удалось загрузить 3D-сцену. Проверьте подключение к интернету и поддержку WebGL, затем обновите страницу.</div>
 <header class="header"><a class="logo" href="#home" aria-label="Relament — в начало">relament<sup>®</sup></a><span class="edition">RECYCLING + FILAMENT / MATERIAL STUDIES — 01</span><nav class="nav"><a href="#shredder">Процесс</a><a href="#result">Новая форма</a><button class="info" id="info">Info ↗</button></nav></header>
@@ -71,7 +72,7 @@ const capMaterials=['#f33b25','#f5c91a','#08a15a','#164cdb','#f5f3ed','#f38124',
 const stampMaps={};function capStamp(ma,n){if(!stampMaps[n]){const cv=document.createElement('canvas');cv.width=cv.height=256;const c=cv.getContext('2d');c.fillStyle='#808080';c.fillRect(0,0,256,256);c.strokeStyle='#bababa';c.lineWidth=9;c.lineJoin='round';c.beginPath();c.moveTo(128,20);c.lineTo(235,210);c.lineTo(21,210);c.closePath();c.stroke();c.fillStyle='#c0c0c0';c.textAlign='center';c.font='bold 92px Arial';c.fillText(n,128,174);stampMaps[n]=new THREE.CanvasTexture(cv)}const m=ma.clone();m.bumpMap=stampMaps[n];m.bumpScale=.0045;return m}
 const caps=[],capGeo=new THREE.LatheGeometry([[0,.105],[.30,.105],[.345,.10],[.366,.084],[.376,.05],[.377,-.067],[.368,-.091],[.342,-.096],[.334,-.075],[.335,.045],[.318,.067],[0,.067]].reverse().map(p=>new THREE.Vector2(...p)),64),ridgeGeo=new RoundedBoxGeometry(.018,.12,.025,2,.004),ridgeCircle=[];for(let j=0;j<32;j++){const a=j/32*Math.PI*2;ridgeCircle.push([Math.sin(a)*.373,Math.cos(a)*.373,a])}
 const count=innerWidth<768?50:76;
-for(let i=0;i<count;i++){const g=new THREE.Group(),ma=capMaterials[i%capMaterials.length];const body=mesh(capGeo,ma,g);for(const y of[-.058,-.021]){const thread=torus(g,.333,.008,ma,0,y);thread.rotation.x=Math.PI/2;}const lip=torus(g,.33,.026,ma,0,-.086,0);lip.rotation.x=Math.PI/2;const ridges=new THREE.InstancedMesh(ridgeGeo,ma,32);const dummy=new THREE.Object3D();ridgeCircle.forEach(([x,z,a],j)=>{dummy.position.set(x,0,z);dummy.rotation.y=a;dummy.updateMatrix();ridges.setMatrixAt(j,dummy.matrix)});g.add(ridges);const mark=mesh(new THREE.PlaneGeometry(.24,.24),capStamp(ma,['2','4','5'][i%3]),g,0,.106,0);mark.rotation.x=-Math.PI/2;g.rotation.set(Math.random()*3,Math.random()*6,Math.random()*3);const scale=.75+Math.random()*.65;g.scale.setScalar(scale);const a=Math.random()*Math.PI*2;const p=new THREE.Vector3(Math.cos(a)*(5+Math.random()*3),Math.sin(a)*(4+Math.random()*2),(Math.random()-.5)*3);g.position.copy(p);capsGroup.add(g);caps.push({g,p,v:new THREE.Vector3(),r:.37*scale,mass:scale**3,angle:i/count*Math.PI*2})}
+for(let i=0;i<count;i++){const g=new THREE.Group(),ma=capMaterials[i%capMaterials.length];const body=mesh(capGeo,ma,g);for(const y of[-.058,-.021]){const thread=torus(g,.333,.008,ma,0,y);thread.rotation.x=Math.PI/2;}const lip=torus(g,.33,.026,ma,0,-.086,0);lip.rotation.x=Math.PI/2;const ridges=new THREE.InstancedMesh(ridgeGeo,ma,32);const dummy=new THREE.Object3D();ridgeCircle.forEach(([x,z,a],j)=>{dummy.position.set(x,0,z);dummy.rotation.y=a;dummy.updateMatrix();ridges.setMatrixAt(j,dummy.matrix)});g.add(ridges);const mark=mesh(new THREE.PlaneGeometry(.24,.24),capStamp(ma,['2','4','5'][i%3]),g,0,.106,0);mark.rotation.x=-Math.PI/2;g.rotation.set(Math.random()*3,Math.random()*6,Math.random()*3);const scale=.75+Math.random()*.65;g.scale.setScalar(scale);const a=Math.random()*Math.PI*2;const p=new THREE.Vector3(Math.cos(a)*(5+Math.random()*3),Math.sin(a)*(4+Math.random()*2),(Math.random()-.5)*3);g.position.copy(p);capsGroup.add(g);caps.push({g,p,v:new THREE.Vector3(),r:.408*scale,baseRadius:.408*scale,mass:scale**3,angle:i/count*Math.PI*2})}
 const cutterShape=new THREE.Shape();for(let i=0;i<48;i++){const a=i/48*Math.PI*2,r=[.32,.43,.43,.34][i%4],x=Math.cos(a)*r,y=Math.sin(a)*r;if(i===0)cutterShape.moveTo(x,y);else cutterShape.lineTo(x,y)}cutterShape.closePath();const cutterBore=new THREE.Path();cutterBore.absarc(0,0,.125,0,Math.PI*2,true);cutterShape.holes.push(cutterBore);const cutterGeo=new THREE.ExtrudeGeometry(cutterShape,{depth:.14,bevelEnabled:true,bevelThickness:.008,bevelSize:.008,bevelSegments:2,steps:1,curveSegments:24});cutterGeo.center();
 // Shredder: open hopper, intermeshing shafts, gearbox and a visible flake tray.
 box(shredder,3.6,.18,2.6,dark,0,-1.9);for(const x of[-1.55,1.55])for(const z of[-1.05,1.05])box(shredder,.14,1.7,.14,metal,x,-1,z);
@@ -155,24 +156,79 @@ const allGroups=[...groups,thread];
 const printerFades=[];printer.traverse(o=>{if(o.isMesh){o.material=o.material.clone();o.material.transparent=true;if(o.material.clippingPlanes?.length)o.material.clippingPlanes=[printPlane];printerFades.push(o.material)}});
 const queenFades=[];queenScene.traverse(o=>{if(o.isMesh){o.material=o.material.clone();o.material.transparent=true;queenFades.push(o.material)}});
 const initiallyReduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
-const capScales=caps.map(b=>b.g.scale.x);caps.forEach((b,i)=>{b.p.set((Math.random()-.5)*8,4+Math.random()*7,(Math.random()-.5)*1.2);b.g.position.copy(b.p)});
-function tick(){requestAnimationFrame(tick);const dt=Math.min(clock.getDelta(),.035),t=clock.elapsedTime,q=relament.journey,s=relament.stage,p=relament.local,f=dt*60;frame++;
+// CAP_SOLVER_BEGIN
+// The conservative sphere encloses the cap's rim at every rendered orientation.
+// Fixed substeps prevent tunnelling; sleeping contacts stop rest-position chatter.
+function createCapSimulation(bodies){
+const STEP=1/120,ITERATIONS=14,GAP=.008;let accumulator=0,lastMode='',lastGather=-1,lastFeed=-1,targetBound=0,steps=0;
+const limit=(x,a,b)=>Math.max(a,Math.min(b,x));
+function wake(b){b.sleeping=false;b.still=0}
+for(const b of bodies){b.inv=1/b.mass;b.previous={x:b.p.x,y:b.p.y,z:b.p.z};b.rest={x:0,y:0,z:0};b.sleeping=false;b.still=0;b.consumed=false;b.supported=false}
+function reset(bound=3.15){accumulator=0;lastMode='';const maxRadius=Math.max(...bodies.map(b=>b.baseRadius)),spacing=maxRadius*2+.05,cols=Math.max(2,Math.floor(bound*2/spacing)),layers=2;
+bodies.forEach((b,i)=>{const column=i%cols,layer=Math.floor(i/cols)%layers,row=Math.floor(i/(cols*layers));b.p.x=(column-(cols-1)/2)*spacing;b.p.y=4+row*spacing;b.p.z=(layer-.5)*spacing;b.v.x=b.v.y=b.v.z=0;b.consumed=false;wake(b)})}
+function buildRest(bound,floor){targetBound=bound;const n=bodies.length;for(let i=0;i<n;i++){const b=bodies[i],u=(i+.5)/n,a=i*2.399963229728653,r=Math.sqrt(1-(u*2-1)**2);b.rest.x=Math.cos(a)*r*Math.min(2.25,bound-.6);b.rest.y=Math.sin(a)*r*2.05;b.rest.z=(u*2-1)*.8}
+// Assign feasible individual destinations once, rather than forcing every cap
+// into the same point and letting attraction fight the contact solver forever.
+for(let pass=0;pass<160;pass++){
+for(let i=0;i<n;i++)for(let j=i+1;j<n;j++){const a=bodies[i],b=bodies[j],dx=b.rest.x-a.rest.x,dy=b.rest.y-a.rest.y,dz=b.rest.z-a.rest.z,d=Math.hypot(dx,dy,dz),min=a.baseRadius+b.baseRadius+.035;if(d<min){const k=(min-d)*.51/(d||1),nx=d?dx:1,ny=d?dy:0,nz=d?dz:0;a.rest.x-=nx*k;a.rest.y-=ny*k;a.rest.z-=nz*k;b.rest.x+=nx*k;b.rest.y+=ny*k;b.rest.z+=nz*k}}
+for(const b of bodies){const r=b.baseRadius;b.rest.x=limit(b.rest.x,-bound+r,bound-r);b.rest.z=limit(b.rest.z,-1.25+r,1.25-r);b.rest.y=Math.max(b.rest.y,floor(b.rest.x)+r+.05)}
+}
+}
+function contain(b,cfg,feed){const r=b.r,bound=feed?1.25:cfg.bound,depth=feed?.85:1.25;const lo=-bound+r,hi=bound-r;
+if(b.p.x<lo){b.p.x=lo;if(b.v.x<0)b.v.x*=-.12}if(b.p.x>hi){b.p.x=hi;if(b.v.x>0)b.v.x*=-.12}
+if(b.p.z<-depth+r){b.p.z=-depth+r;if(b.v.z<0)b.v.z*=-.08}if(b.p.z>depth-r){b.p.z=depth-r;if(b.v.z>0)b.v.z*=-.08}
+const floor=feed?.32:cfg.floor(b.p.x);if(b.p.y<floor+r){b.p.y=floor+r;b.supported=true;if(b.v.y<0)b.v.y=b.v.y<-1.2?-b.v.y*.18:0;b.v.x*=.94;b.v.z*=.94}
+}
+function substep(cfg){steps++;const feed=cfg.feed,mode=feed?'feed':cfg.gather>.98?'cluster':'pile';
+const changed=lastMode!==mode||Math.abs(cfg.gather-lastGather)>.001||Math.abs(cfg.progress-lastFeed)>.001;
+if(changed){for(const b of bodies){wake(b);if(!feed)b.consumed=false}lastMode=mode;lastGather=cfg.gather;lastFeed=cfg.progress}
+for(let i=0;i<bodies.length;i++){const b=bodies[i];if(b.consumed)continue;b.previous.x=b.p.x;b.previous.y=b.p.y;b.previous.z=b.p.z;b.supported=false;
+const dx=b.p.x-cfg.mouse.x,dy=b.p.y-cfg.mouse.y,dz=b.p.z-cfg.mouse.z,md=Math.hypot(dx,dy,dz),near=cfg.mouseActive&&md<cfg.mouseRadius;
+if(near)wake(b);if(b.sleeping)continue;
+if(feed){b.phase=limit((cfg.progress-i/bodies.length*.28)*1.38,0,1);const targetY=3.8-b.phase*b.phase*4.6;b.v.x+=(Math.sin(i*2.399)*.8-b.p.x)*12*STEP;b.v.z+=(Math.cos(i*2.399)*.5-b.p.z)*12*STEP;b.v.y+=((targetY-b.p.y)*15-12)*STEP}
+else{const g=cfg.gather;b.v.x+=(b.rest.x-b.p.x)*8*g*STEP;b.v.y+=((b.rest.y-b.p.y)*8*g-18*(1-g))*STEP;b.v.z+=(b.rest.z-b.p.z)*8*g*STEP}
+if(near&&md>.0001){const force=Math.min(65,28*(1-md/cfg.mouseRadius)**2*(1+cfg.mouseSpeed*2.5));b.v.x+=dx/md*force*STEP;b.v.y+=dy/md*force*STEP;b.v.z+=dz/md*force*.12*STEP}
+const damp=Math.exp(-(feed?5:2.5+cfg.gather*1.8)*STEP);b.v.x*=damp;b.v.y*=damp;b.v.z*=damp;const speed=Math.hypot(b.v.x,b.v.y,b.v.z);if(speed>8){const k=8/speed;b.v.x*=k;b.v.y*=k;b.v.z*=k}
+b.p.x+=b.v.x*STEP;b.p.y+=b.v.y*STEP;b.p.z+=b.v.z*STEP;
+}
+for(let pass=0;pass<ITERATIONS;pass++){
+// Alternate traversal to avoid permanently favouring one end of the pile.
+for(let ai=0;ai<bodies.length;ai++){const i=pass%2?bodies.length-1-ai:ai,a=bodies[i];if(a.consumed)continue;
+for(let bj=ai+1;bj<bodies.length;bj++){const j=pass%2?bodies.length-1-bj:bj,b=bodies[j];if(b.consumed)continue;
+let dx=b.p.x-a.p.x,dy=b.p.y-a.p.y,dz=b.p.z-a.p.z;const min=a.r+b.r+GAP,d2=dx*dx+dy*dy+dz*dz;if(d2>=min*min)continue;
+let d=Math.sqrt(d2);if(d<1e-9){dx=(i+j)%2?1:-1;dy=0;dz=0;d=1}const nx=dx/d,ny=dy/d,nz=dz/d,overlap=min-Math.sqrt(d2),rv=(b.v.x-a.v.x)*nx+(b.v.y-a.v.y)*ny+(b.v.z-a.v.z)*nz;
+if(overlap>.08||rv<-.7){if(a.sleeping)wake(a);if(b.sleeping)wake(b)}const wa=a.sleeping?0:a.inv,wb=b.sleeping?0:b.inv,total=wa+wb;if(!total)continue;
+const correction=overlap*.92;a.p.x-=nx*correction*wa/total;a.p.y-=ny*correction*wa/total;a.p.z-=nz*correction*wa/total;b.p.x+=nx*correction*wb/total;b.p.y+=ny*correction*wb/total;b.p.z+=nz*correction*wb/total;
+if(ny>.25)b.supported=true;if(ny<-.25)a.supported=true;
+if(rv<0){const impulse=-(1+(rv<-.8?.12:0))*rv/total;a.v.x-=nx*impulse*wa;a.v.y-=ny*impulse*wa;a.v.z-=nz*impulse*wa;b.v.x+=nx*impulse*wb;b.v.y+=ny*impulse*wb;b.v.z+=nz*impulse*wb}
+}
+}
+for(const b of bodies)if(!b.consumed&&!b.sleeping)contain(b,cfg,feed);
+}
+for(const b of bodies){if(b.consumed)continue;
+if(feed&&b.phase>.88&&b.p.y<=.32+b.r+.035){b.consumed=true;b.v.x=b.v.y=b.v.z=0;continue}
+if(b.sleeping){if(!feed&&cfg.gather<.01){let supported=b.p.y<=cfg.floor(b.p.x)+b.r+.035;for(const other of bodies){if(supported)break;if(other===b||other.consumed||other.p.y>=b.p.y)continue;const d=Math.hypot(b.p.x-other.p.x,b.p.y-other.p.y,b.p.z-other.p.z);if(d<b.r+other.r+.035)supported=true}if(!supported)wake(b)}continue}
+const moved=Math.hypot(b.p.x-b.previous.x,b.p.y-b.previous.y,b.p.z-b.previous.z),speed=Math.hypot(b.v.x,b.v.y,b.v.z),settle=cfg.gather>.98||b.supported;
+const quiet=(speed<.14&&moved<.004)||(moved<.00025&&(b.supported||cfg.gather>.98));if(settle&&!cfg.mouseActive&&quiet){b.still+=STEP;if(b.still>.75){b.sleeping=true;b.v.x=b.v.y=b.v.z=0}}else b.still=0;
+}
+}
+function advance(dt,cfg){if(Math.abs(targetBound-cfg.bound)>.02)buildRest(cfg.bound,cfg.floor);accumulator+=Math.min(dt,.1);let n=0;while(accumulator+1e-10>=STEP&&n<12){substep(cfg);accumulator-=STEP;n++}return n}
+function diagnostics(){let penetration=0,sleeping=0,visible=0;for(let i=0;i<bodies.length;i++){const a=bodies[i];if(a.consumed)continue;visible++;if(a.sleeping)sleeping++;for(let j=i+1;j<bodies.length;j++){const b=bodies[j];if(b.consumed)continue;penetration=Math.max(penetration,a.r+b.r-Math.hypot(a.p.x-b.p.x,a.p.y-b.p.y,a.p.z-b.p.z))}}return {penetration,sleeping,visible,steps}}
+return {advance,reset,diagnostics};
+}
+// CAP_SOLVER_END
+
+const capScales=caps.map(b=>b.g.scale.x),capSim=createCapSimulation(caps);capSim.reset();
+function tick(){requestAnimationFrame(tick);const rawDt=Math.min(clock.getDelta(),.1),dt=Math.min(rawDt,.035),t=clock.elapsedTime,q=relament.journey,s=relament.stage,p=relament.local,f=dt*60;frame++;
 const base=mobile?Math.min(.83,viewW/6.4):Math.min(1.55,viewH/7.5);root.scale.setScalar(base);root.position.set(0,mobile?(q>7.35?.5:-.05):0,0);root.rotation.set(0,0,0);
 allGroups.forEach(g=>{g.visible=false});studioFloor.visible=q>7.5;studioFloor.position.y=-2.2;groundShadow.material.opacity=.42;groundShadow.visible=q>7.5;groundShadow.position.set(0,-2.1,-.5);groundShadow.scale.setScalar(1);
 const valid=Math.abs(pointer.x)<1.1&&Math.abs(pointer.y)<1.1;const mx=valid?pointer.x:0,my=valid?pointer.y:0;const mouseWorld=new THREE.Vector3(pointer.x*viewW/2/base,(pointer.y*viewH/2-root.position.y)/base,0);const speed=valid?Math.min(pointer.distanceTo(prev)*12,3):0;prev.copy(pointer);
 if(q<3){capsGroup.visible=true;const gather=ss(.52,1.25,q),drop=ss(1.65,2.1,q);capsGroup.rotation.set(drop*1.48,0,-drop*.025);capsGroup.position.set(drop*.35,0,0);capsGroup.scale.setScalar(1);const bound=mobile?viewW/base*.43:Math.min(3.15,viewW/base*.28);
-if(q<.08&&previousQ>2){caps.forEach((b,i)=>{b.p.set((Math.random()-.5)*8,4+Math.random()*6,(Math.random()-.5)*1.2);b.v.set(0,0,0)})}
-for(let i=0;i<caps.length;i++){const b=caps[i];b.g.visible=true;b.g.scale.setScalar(capScales[i]*(1-drop*.47));
-if(q<1.72){const tx=Math.sin(i*2.399)*.85,ty=Math.cos(i*1.618)*.7-.3;b.v.y-=.013*(1-gather)*f;b.v.x+=(tx-b.p.x)*.0035*gather*f;b.v.y+=(ty-b.p.y)*.0055*gather*f;b.v.z+=(0-b.p.z)*.005*gather*f;
-if(valid){tmp.subVectors(b.p,mouseWorld);const d=tmp.length(),radius=down?2.8:1.8;if(d<radius&&d>.001){const ratio=d/radius,force=(1-ratio*ratio*(3-2*ratio))*.045*(1+speed*3.2)*(down?1.7:1);tmp.normalize();tmp.z*=.12;b.v.addScaledVector(tmp,force*f)}}
-b.v.multiplyScalar(Math.pow(lerp(.986,.91,gather),f));b.p.addScaledVector(b.v,f);
-if(b.p.x<-bound+b.r){b.p.x=-bound+b.r;b.v.x=Math.abs(b.v.x)*.55}if(b.p.x>bound-b.r){b.p.x=bound-b.r;b.v.x=-Math.abs(b.v.x)*.55}
-const floor=-viewH/base*(mobile?.15:.24)+Math.pow(Math.abs(b.p.x)/bound,3)*1.35;if(b.p.y<floor+b.r){b.p.y=floor+b.r;if(b.v.y<0)b.v.y=-b.v.y*.42;b.v.x*=.98}b.p.z=clamp(b.p.z,-.8,.8);
-}else{const feed=clamp((q-1.8)*1.08+relament.crush*.8);const phase=clamp((feed-i/caps.length*.28)*1.38);const y=3.8-phase*phase*4.6;const tx=Math.sin(i*2.399)*.92,tz=Math.cos(i*2.399)*.62;b.v.x+=(tx-b.p.x)*.035*f;b.v.z+=(tz-b.p.z)*.035*f;b.v.y+=(y-b.p.y)*.035*f;b.v.multiplyScalar(Math.pow(.82,f));b.p.addScaledVector(b.v,f);if(b.p.y<.48&&phase>.88){b.g.visible=false}}
-b.g.rotation.x+=b.v.y*.35*f;b.g.rotation.z-=b.v.x*.5*f;
-}
-if(q<1.73)for(let sub=0;sub<3;sub++)for(let i=0;i<caps.length;i++)for(let j=i+1;j<caps.length;j++){const a=caps[i],b=caps[j];tmp.subVectors(b.p,a.p);const d=tmp.length(),min=(a.r+b.r)*.88;if(d<min&&d>.001){tmp.divideScalar(d);const ov=(min-d)*.29,total=a.mass+b.mass;a.p.addScaledVector(tmp,-ov*b.mass/total);b.p.addScaledVector(tmp,ov*a.mass/total);const rv=relativeVelocity.subVectors(b.v,a.v).dot(tmp);if(rv<0){const imp=-1.08*rv/(1/a.mass+1/b.mass);a.v.addScaledVector(tmp,-imp/a.mass);b.v.addScaledVector(tmp,imp/b.mass)}}}
-for(const b of caps)b.g.position.copy(b.p);
+if(q<.08&&previousQ>2)capSim.reset(bound);
+for(let i=0;i<caps.length;i++){const scale=capScales[i]*(1-drop*.47);caps[i].g.scale.setScalar(scale);caps[i].r=.408*scale;}
+const feed=q>=1.72,progress=clamp((q-1.8)*1.08+relament.crush*.8),floor=x=>-viewH/base*(mobile?.15:.24)+Math.pow(Math.abs(x)/bound,3)*1.35;
+capSim.advance(rawDt,{bound,gather,feed,progress,floor,mouse:mouseWorld,mouseActive:valid&&(speed>.002||down),mouseRadius:down?2.8:1.8,mouseSpeed:speed});
+for(const b of caps){b.g.visible=!b.consumed;const dx=b.p.x-b.g.position.x,dy=b.p.y-b.g.position.y,dz=b.p.z-b.g.position.z;if(!b.sleeping&&!b.consumed&&Math.hypot(dx,dy,dz)>.0005){b.g.rotation.x+=dy*.35;b.g.rotation.z-=dx*.5;}b.g.position.copy(b.p);}
 if(q>1.55){shredder.visible=true;shredder.rotation.set(1.48,0,-.025);shredder.position.set(.35,ss(2.8,3.1,q)*9,0);shredder.scale.setScalar(ss(1.55,2,q)*1.25);const amount=Math.max(relament.crush,ss(2.05,2.96,q));rollers.forEach((r,i)=>r.rotation.x+=(i?1:-1)*(.025+amount*.19)*f);flakes.forEach((fl,i)=>{fl.visible=i<amount*180;fl.position.y=.36+Math.sin(t*4+i)*.08;fl.rotation.z+=.018*f});if(q>2.8)capsGroup.position.y=shredder.position.y;}
 }
 if(q>=2.8&&q<5.35){extruder.visible=true;screwHelix.rotation.y+=.025*f;const enter=ss(2.72,3,q),macro=ss(3.55,4.5,q),leave=ss(4.45,5.35,q);extruder.scale.setScalar(lerp(.88,1.65,macro));extruder.position.set(0,lerp(-9,0,enter)+macro*3.1+leave*12,0);extruder.rotation.set(.04,lerp(.3,-.08,macro)+mx*.025,0);groundShadow.visible=false;}
@@ -184,6 +240,6 @@ if(q>12.5){queenScene.visible=true;const reveal=ss(12.5,13,q);queenScene.scale.s
 if(osc&&!relament.muted){osc.frequency.setTargetAtTime(s===2?55+relament.crush*65:s>=10&&s<13?125:70,audioCtx.currentTime,.2);gain.gain.setTargetAtTime(s===2?.014:.006,audioCtx.currentTime,.1)}
 renderer.render(scene,camera);if(frame===2)window.sceneReady();previousQ=q;
 }
-tick();window.__relament3d={scene,renderer,camera,caps,groups};
+tick();window.__relament3d={scene,renderer,camera,caps,groups,capPhysics:capSim};
 }catch(e){console.error('Relament 3D:',e);window.sceneFailed()}
 </script></body></html>
